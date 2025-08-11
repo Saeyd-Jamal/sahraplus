@@ -21,3 +21,5 @@ yarn-error.log
 /.nova
 /.vscode
 /.zed
+/auto-crud-full.sh
+/config/laravel_auto_crud.php

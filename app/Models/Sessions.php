@@ -1,0 +1,15 @@
+<?php
+
+namespace App\Models;
+
+use Illuminate\Database\Eloquent\Model;
+
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+class Sessions extends Model
+{
+    use HasFactory;
+    protected $table = 'sessions';
+    public $timestamps = false;
+
+    protected $fillable = ['user_id', 'ip_address', 'user_agent', 'payload', 'last_activity'];
+}

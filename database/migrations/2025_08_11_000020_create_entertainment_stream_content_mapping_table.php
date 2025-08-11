@@ -1,0 +1,29 @@
+<?php
+
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
+use Illuminate\Support\Facades\DB;
+
+return new class extends Migration {
+    public function up(): void
+    {
+        Schema::create('entertainment_stream_content_mapping', function (Blueprint $table) {
+            $table->bigIncrements('id');
+            $table->unsignedBigInteger('entertainment_id');
+            $table->string('type', 191)->nullable();
+            $table->string('quality', 191)->nullable();
+            $table->text('url')->nullable();
+            $table->unsignedInteger('created_by')->nullable();
+            $table->unsignedInteger('updated_by')->nullable();
+            $table->unsignedInteger('deleted_by')->nullable();
+            $table->timestamp('deleted_at')->nullable();
+            $table->timestamps();
+        });
+    }
+
+    public function down(): void
+    {
+        Schema::dropIfExists('entertainment_stream_content_mapping');
+    }
+};
