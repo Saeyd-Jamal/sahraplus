@@ -15,7 +15,7 @@ class CouponSubscriptionPlan extends Model
 
     public function coupon()
     {
-        return $this->belongsTo(Coupons::class, 'coupon_id');
+        return $this->belongsTo(Coupon::class, 'coupon_id');
     }
 
     public function plan()
