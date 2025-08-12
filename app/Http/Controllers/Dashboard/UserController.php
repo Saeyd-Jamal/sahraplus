@@ -1,194 +1,67 @@
 <?php
 
-namespace App\Http\Controllers\Dashboard;
+namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
-use App\Models\ActivityLog;
-use App\Models\RoleUser;
-use App\Models\User;
-use App\Services\ActivityLogService;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Storage;
+use App\Http\Requests\UserRequest;
+use App\Services\UserService;
 
 class UserController extends Controller
 {
     /**
-     * Display a listing of the resource.
+     * @var UserService
      */
-    public function index()
-    {
-        $this->authorize('view', User::class);
-        $users = User::paginate(10);
-        return view('dashboard.users.index', compact('users'));
-    }
+    protected UserService $userService;
 
     /**
-     * Show the form for creating a new resource.
+     * DummyModel Constructor
+     *
+     * @param UserService $userService
+     *
      */
-    public function create(Request $request)
+    public function __construct(UserService $userService)
     {
-        $this->authorize('create', User::class);
-        $user = new User();
-        return view('dashboard.users.create', compact('user'));
+        $this->userService = $userService;
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(Request $request)
+    public function index(): \Illuminate\Contracts\View\View
     {
-        $this->authorize('create', User::class);
-
-        $request->validate([
-            'name' => 'required',
-            'username' => 'required|string|unique:users,username',
-            'password' => 'required|same:confirm_password',
-            'confirm_password' => 'required|same:password',
-        ],[
-            'password.same' => 'كلمة المرور غير متطابقة',
-            'confirm_password.same' => 'كلمة المرور غير متطابقة',
-        ]);
-        DB::beginTransaction();
-        try{
-            if($request->has('avatar')){
-                $avatar = $request->file('avatar');
-                $path = $avatar->store('avatars','public');
-                $request->merge(['avatar' => $path]);
-            }
-            $user = User::create($request->all());
-            foreach ($request->abilities as $role) {
-                RoleUser::create([
-                    'role_name' => $role,
-                    'user_id' => $user->id,
-                    'ability' => 'allow',
-                ]);
-            }
-            DB::commit();
-        }catch(\Exception $e){
-            DB::rollBack();
-            return redirect()->back()->with('error', $e->getMessage());
-        }
-        return redirect()->route('dashboard.users.index')->with('success', 'تم اضافة مستخدم جديد');
+        $users = $this->userService->getAll();
+        return view('users.index', compact('users'));
     }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(User $user)
+    public function create(): \Illuminate\Contracts\View\View
     {
-        if(Auth::user()->id != $user->id && !$this->authorize('view', User::class)){
-            abort(403);
-        }
-        $profile = Auth::user()->id == $user->id && !$this->authorize('view', User::class) ? true : false;
-        $logs = ActivityLog::where('user_id',$user->id)->orderBy('created_at','DESC')->paginate(20);
-        return view('dashboard.users.show', compact('user','logs','profile'));
+        return view('users.create');
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function settings(Request $request)
+    public function store(UserRequest $request): \Illuminate\Http\RedirectResponse
     {
-        $user = Auth::user();
-        if(Auth::user()->id != $user->id || !$this->authorize('update', User::class)){
-            abort(403);
-        }
-        $btn_label = "تعديل";
-        $settings_profile = true;
-        return view('dashboard.users.settings', compact('user', 'btn_label', 'settings_profile'));
-    }
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(Request $request, User $user)
-    {
-        $this->authorize('update', User::class);
-        $btn_label = "تعديل";
-        return view('dashboard.users.edit', compact('user', 'btn_label'));
+        $this->userService->save($request->validated());
+        return redirect()->route('users.index')->with('success', 'Created successfully');
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, User $user)
+    public function show(int $id): \Illuminate\Contracts\View\View
     {
-        $this->authorize('update', User::class);
-        $request->validate([
-            'name' => 'required',
-            'username' => 'required|string|unique:users,username,'.$user->id,
-        ]);
-        DB::beginTransaction();
-        try{
-            $userOld = $user->toArray();
-            $oldAvatar = $user->avatar;
-            if($request->has('avatarUpload')){
-                if($oldAvatar != null){
-                    Storage::disk('public')->delete($oldAvatar);
-                }
-                $avatar = $request->file('avatarUpload');
-                $path = $avatar->store('avatars','public');
-                $request->merge(['avatar' => $path]);
-            }
-            $avatar = $request->avatar ?? $user->avatar;
-            if(isset($request->password)){
-                $user->update($request->all());
-            }
-            $user->update([
-                'name' => $request->name,
-                'username' => $request->username,
-                'email' => $request->email,
-                'avatar' => $avatar ?? null
-            ]);
-            if ($request->abilities != null) {
-                $role_old = RoleUser::where('user_id', $user->id)->pluck('role_name')->toArray();
-                $role_new = $request->abilities;
-                foreach ($role_old as $role) {
-                    if (!in_array($role, $role_new)) {
-                        RoleUser::where('user_id', $user->id)->where('role_name', $role)->delete();
-                    }
-                }
-                foreach ($role_new as $role) {
-                    $role_f = RoleUser::where('user_id', $user->id)->where('role_name', $role)->first();
-                    if ($role_f == null) {
-                        RoleUser::create([
-                            'role_name' => $role,
-                            'user_id' => $user->id,
-                            'ability' => 'allow',
-                        ]);
-                    }else{
-                        $role_f->update(['ability' => 'allow']);
-                    }
-                }
-            }else{
-                RoleUser::where('user_id', $user->id)->delete();
-            }
-            ActivityLogService::log(
-                'Updated',
-                'User',
-                "تم تحديث المستخدم : {$user->name}.",
-                $userOld,
-                $user->getChanges()
-            );
-            DB::commit();
-        }catch(\Exception $e){
-            DB::rollBack();
-            throw $e;
-        }
-        return redirect()->route('dashboard.users.index')->with('success', 'تم تعديل المستخدم');
+        $user = $this->userService->getById($id);
+        return view('users.show', compact('user'));
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(Request $request, User $user)
+    public function edit(int $id): \Illuminate\Contracts\View\View
     {
-        $this->authorize('delete', User::class);
-        if($user->avatar != null){
-            Storage::disk('public')->delete($user->avatar);
-        }
-        $user->delete();
-        return redirect()->route('dashboard.users.index')->with('success', 'تم حذف المستخدم');
+        $user = $this->userService->getById($id);
+        return view('users.edit', compact('user'));
+    }
+
+    public function update(UserRequest $request, int $id): \Illuminate\Http\RedirectResponse
+    {
+        $this->userService->update($request->validated(), $id);
+        return redirect()->route('users.index')->with('success', 'Updated successfully');
+    }
+
+    public function destroy(int $id): \Illuminate\Http\RedirectResponse
+    {
+        $this->userService->deleteById($id);
+        return redirect()->route('users.index')->with('success', 'Deleted successfully');
     }
 }

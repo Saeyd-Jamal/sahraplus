@@ -1,0 +1,29 @@
+<?php
+
+namespace App\Http\Requests;
+
+use Illuminate\Foundation\Http\FormRequest;
+
+class LiveTvStreamContentMappingRequest extends FormRequest
+{
+    public function authorize(): bool
+    {
+        return true;
+    }
+
+    public function rules(): array
+    {
+        return [
+            'tv_channel_id' => 'integer',
+            'type' => 'string|max:191',
+            'stream_type' => 'string|max:191',
+            'embedded' => 'string',
+            'server_url' => 'string',
+            'server_url1' => 'string',
+            'created_by' => 'integer',
+            'updated_by' => 'integer',
+            'deleted_by' => 'integer',
+            'deleted_at' => 'date',
+        ];
+    }
+}

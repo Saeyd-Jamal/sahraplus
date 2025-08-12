@@ -1,25 +1,67 @@
 <?php
 
-namespace App\Http\Controllers\Dashboard;
+namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
-use App\Models\ActivityLog;
-use Carbon\Carbon;
-use Illuminate\Http\Request;
+use App\Http\Requests\ActivityLogRequest;
+use App\Services\ActivityLogService;
 
 class ActivityLogController extends Controller
 {
-    public function index()
+    /**
+     * @var ActivityLogService
+     */
+    protected ActivityLogService $activityLogService;
+
+    /**
+     * DummyModel Constructor
+     *
+     * @param ActivityLogService $activityLogService
+     *
+     */
+    public function __construct(ActivityLogService $activityLogService)
     {
-        $logs = ActivityLog::with('user')->orderBy('created_at','DESC')->paginate(10);
-        return view('dashboard.pages.logs', compact('logs'));
+        $this->activityLogService = $activityLogService;
     }
 
-    public function getLogs(Request $request){
-        $log = ActivityLog::findOrFail($request->id);
-        $log->created_at_diff = Carbon::parse($log->created_at)->diffForHumans();
-        $log->old_data = json_decode($log->old_data);
-        $log->new_data = json_decode($log->new_data);
-        return response()->json($log);
+    public function index(): \Illuminate\Contracts\View\View
+    {
+        $activity_logs = $this->activityLogService->getAll();
+        return view('activity_logs.index', compact('activity_logs'));
+    }
+
+    public function create(): \Illuminate\Contracts\View\View
+    {
+        return view('activity_logs.create');
+    }
+
+    public function store(ActivityLogRequest $request): \Illuminate\Http\RedirectResponse
+    {
+        $this->activityLogService->save($request->validated());
+        return redirect()->route('activity_logs.index')->with('success', 'Created successfully');
+    }
+
+    public function show(int $id): \Illuminate\Contracts\View\View
+    {
+        $activityLog = $this->activityLogService->getById($id);
+        return view('activity_logs.show', compact('activityLog'));
+    }
+
+    public function edit(int $id): \Illuminate\Contracts\View\View
+    {
+        $activityLog = $this->activityLogService->getById($id);
+        return view('activity_logs.edit', compact('activityLog'));
+    }
+
+    public function update(ActivityLogRequest $request, int $id): \Illuminate\Http\RedirectResponse
+    {
+        $this->activityLogService->update($request->validated(), $id);
+        return redirect()->route('activity_logs.index')->with('success', 'Updated successfully');
+    }
+
+    public function destroy(int $id): \Illuminate\Http\RedirectResponse
+    {
+        $this->activityLogService->deleteById($id);
+        return redirect()->route('activity_logs.index')->with('success', 'Deleted successfully');
     }
 }

@@ -1,32 +1,101 @@
 <?php
-
 namespace App\Services;
 
 use App\Models\ActivityLog;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Request;
+use App\Repositories\ActivityLogRepository;
+use Exception;
+use Illuminate\Support\Facades\DB;
+use InvalidArgumentException;
 
 class ActivityLogService
 {
-    // Event Type: Created, Updated, Deleted, Login, Logout, Access Denied
-    public static function log($eventType, $modelName, $message, $oldData = null, $newData = null,$user_id =null ,$user_name = null)
+	/**
+     * @var ActivityLogRepository $activityLogRepository
+     */
+    protected $activityLogRepository;
+
+    /**
+     * DummyClass constructor.
+     *
+     * @param ActivityLogRepository $activityLogRepository
+     */
+    public function __construct(ActivityLogRepository $activityLogRepository)
     {
-        // الحصول على ip الجهاز
-        $internalIp = session('internal_ip', 'IP not found');
-
-
-        // حفظ التفاصيل في قاعدة البيانات
-        ActivityLog::create([
-            'user_id' => $user_id ?? Auth::user()->id,
-            'user_name' => $user_name ?? Auth::user()->name ?? 'Guest',
-            'ip_request' => Request::ip(),
-            'ip_address' => $internalIp,
-            'event_type' => $eventType,
-            'model_name' => $modelName,
-            'message' => $message,
-            'old_data' => json_encode($oldData),
-            'new_data' => json_encode($newData),
-            'created_at' => now(),
-        ]);
+        $this->activityLogRepository = $activityLogRepository;
     }
+
+    /**
+     * Get all activityLogRepository.
+     *
+     * @return String
+     */
+    public function getAll()
+    {
+        return $this->activityLogRepository->all();
+    }
+
+    /**
+     * Get activityLogRepository by id.
+     *
+     * @param $id
+     * @return String
+     */
+    public function getById(int $id)
+    {
+        return $this->activityLogRepository->getById($id);
+    }
+
+    /**
+     * Validate activityLogRepository data.
+     * Store to DB if there are no errors.
+     *
+     * @param array $data
+     * @return String
+     */
+    public function save(array $data)
+    {
+        return $this->activityLogRepository->save($data);
+    }
+
+    /**
+     * Update activityLogRepository data
+     * Store to DB if there are no errors.
+     *
+     * @param array $data
+     * @return String
+     */
+    public function update(array $data, int $id)
+    {
+        DB::beginTransaction();
+        try {
+            $activityLogRepository = $this->activityLogRepository->update($data, $id);
+            DB::commit();
+            return $activityLogRepository;
+        } catch (Exception $e) {
+            DB::rollBack();
+            report($e);
+            throw new InvalidArgumentException('Unable to update post data');
+        }
+    }
+
+    /**
+     * Delete activityLogRepository by id.
+     *
+     * @param $id
+     * @return String
+     */
+    public function deleteById(int $id)
+    {
+        DB::beginTransaction();
+        try {
+            $activityLogRepository = $this->activityLogRepository->delete($id);
+            DB::commit();
+            return $activityLogRepository;
+        } catch (Exception $e) {
+            DB::rollBack();
+            report($e);
+            throw new InvalidArgumentException('Unable to delete post data');
+        }
+    }
+
 }

@@ -1,60 +1,67 @@
 <?php
 
-namespace App\Http\Controllers\Dashboard;
+namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
-use App\Models\Currency;
-use App\Services\ActivityLogService;
-use Illuminate\Http\Request;
+use App\Http\Requests\CurrencyRequest;
+use App\Services\CurrencyService;
 
 class CurrencyController extends Controller
 {
     /**
-     * Display a listing of the resource.
+     * @var CurrencyService
      */
-    public function index()
-    {
-        $this->authorize('view', Currency::class);
-        $currencies = Currency::all();
-        return view('dashboard.pages.currencies', compact('currencies'));
-    }
+    protected CurrencyService $currencyService;
 
     /**
-     * Store a newly created resource in storage.
+     * DummyModel Constructor
+     *
+     * @param CurrencyService $currencyService
+     *
      */
-    public function store(Request $request)
+    public function __construct(CurrencyService $currencyService)
     {
-        $this->authorize('create', Currency::class);
-        Currency::create($request->all());
-        return redirect()->route('dashboard.currencies.index')->with('success','تم إضافة عملة جديدة');
+        $this->currencyService = $currencyService;
     }
 
-
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, Currency $currency)
+    public function index(): \Illuminate\Contracts\View\View
     {
-        $this->authorize('update', Currency::class);
-        $currency->update($request->all());
-        ActivityLogService::log(
-            'Updated',
-            'Currency',
-            "تم تعديل عملة : {$currency->name}.",
-            $currency->getOriginal(),
-            $currency->getChanges()
-        );
-        return redirect()->route('dashboard.currencies.index')->with('success','تم تحديث البيانات');
-
+        $currencies = $this->currencyService->getAll();
+        return view('currencies.index', compact('currencies'));
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(Request $request,Currency $currency)
+    public function create(): \Illuminate\Contracts\View\View
     {
-        $this->authorize('delete', Currency::class);
-        $currency->delete();
-        return redirect()->route('dashboard.currencies.index')->with('success','تم حذف البيانات');
+        return view('currencies.create');
+    }
+
+    public function store(CurrencyRequest $request): \Illuminate\Http\RedirectResponse
+    {
+        $this->currencyService->save($request->validated());
+        return redirect()->route('currencies.index')->with('success', 'Created successfully');
+    }
+
+    public function show(int $id): \Illuminate\Contracts\View\View
+    {
+        $currency = $this->currencyService->getById($id);
+        return view('currencies.show', compact('currency'));
+    }
+
+    public function edit(int $id): \Illuminate\Contracts\View\View
+    {
+        $currency = $this->currencyService->getById($id);
+        return view('currencies.edit', compact('currency'));
+    }
+
+    public function update(CurrencyRequest $request, int $id): \Illuminate\Http\RedirectResponse
+    {
+        $this->currencyService->update($request->validated(), $id);
+        return redirect()->route('currencies.index')->with('success', 'Updated successfully');
+    }
+
+    public function destroy(int $id): \Illuminate\Http\RedirectResponse
+    {
+        $this->currencyService->deleteById($id);
+        return redirect()->route('currencies.index')->with('success', 'Deleted successfully');
     }
 }

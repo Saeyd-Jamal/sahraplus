@@ -1,0 +1,58 @@
+<div class="container">
+    <h2>Edit state</h2>
+    <form action="{{ route('states.update', $state->id) }}" method="POST">
+        @csrf
+        @method("PATCH")
+        <div class="mb-3">
+            <label for="name" class="form-label">name</label>
+            <input type="text" class="form-control" name="name" value="{{old("name", $state["name"])}}">
+            @error("name")
+                <p>{{$message}}</p>
+            @enderror
+        </div>
+<div class="mb-3">
+            <label for="country_id" class="form-label">country_id</label>
+            <input type="text" class="form-control" name="country_id" value="{{old("country_id", $state["country_id"])}}">
+            @error("country_id")
+                <p>{{$message}}</p>
+            @enderror
+        </div>
+<div class="mb-3">
+            <label for="status" class="form-label">status</label>
+            <input type="text" class="form-control" name="status" value="{{old("status", $state["status"])}}">
+            @error("status")
+                <p>{{$message}}</p>
+            @enderror
+        </div>
+<div class="mb-3">
+            <label for="created_by" class="form-label">created_by</label>
+            <input type="text" class="form-control" name="created_by" value="{{old("created_by", $state["created_by"])}}">
+            @error("created_by")
+                <p>{{$message}}</p>
+            @enderror
+        </div>
+<div class="mb-3">
+            <label for="updated_by" class="form-label">updated_by</label>
+            <input type="text" class="form-control" name="updated_by" value="{{old("updated_by", $state["updated_by"])}}">
+            @error("updated_by")
+                <p>{{$message}}</p>
+            @enderror
+        </div>
+<div class="mb-3">
+            <label for="deleted_by" class="form-label">deleted_by</label>
+            <input type="text" class="form-control" name="deleted_by" value="{{old("deleted_by", $state["deleted_by"])}}">
+            @error("deleted_by")
+                <p>{{$message}}</p>
+            @enderror
+        </div>
+<div class="mb-3">
+            <label for="deleted_at" class="form-label">deleted_at</label>
+            <input type="text" class="form-control" name="deleted_at" value="{{old("deleted_at", $state["deleted_at"])}}">
+            @error("deleted_at")
+                <p>{{$message}}</p>
+            @enderror
+        </div>
+
+        <button type="submit" class="btn btn-primary">Submit</button>
+    </form>
+</div>

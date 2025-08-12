@@ -28,18 +28,18 @@ for %%F in ("%MODELS_DIR%"\*.php) do (
     set "MODELNAME=%%~nF"
     echo 🔄 توليد CRUD للنموذج: !MODELNAME!
     rem تنفيذ أمر auto‑crud
-    php artisan auto-crud:generate -M !MODELNAME! -A -R -PM -S -C -O --no-interaction --silent
+    php artisan auto-crud:generate -M !MODELNAME! -A  -O --no-interaction
     rem بعد التوليد، تحريك أى Controller خاص بهذا النموذج إلى مجلد Dashboard
     rem نبحث فى المجلد الرئيسى Controllers
     for %%C in (app\Http\Controllers\!MODELNAME!*Controller.php) do (
         if exist "%%C" move /Y "%%C" "%DASHBOARD_DIR%" > nul
     )
-    rem نبحث أيضاً داخل مجلد Api (فى حال توليده هناك)
-    if exist app\Http\Controllers\Api (
-        for %%C in (app\Http\Controllers\Api\!MODELNAME!*Controller.php) do (
-            if exist "%%C" move /Y "%%C" "%DASHBOARD_DIR%" > nul
-        )
-    )
+    @REM rem نبحث أيضاً داخل مجلد Api (فى حال توليده هناك)
+    @REM if exist app\Http\Controllers\Api (
+    @REM     for %%C in (app\Http\Controllers\Api\!MODELNAME!*Controller.php) do (
+    @REM         if exist "%%C" move /Y "%%C" "%DASHBOARD_DIR%" > nul
+    @REM     )
+    @REM )
 )
 
 echo ✅ تم الانتهاء من التوليد ونقل الـControllers إلى المجلد %DASHBOARD_DIR%

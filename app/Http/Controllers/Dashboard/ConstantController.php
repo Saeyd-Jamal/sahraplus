@@ -1,44 +1,67 @@
 <?php
 
-namespace App\Http\Controllers\Dashboard;
+namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
-use App\Models\Constant;
-use Illuminate\Http\Request;
+use App\Http\Requests\ConstantRequest;
+use App\Services\ConstantService;
 
 class ConstantController extends Controller
 {
     /**
-     * Display a listing of the resource.
+     * @var ConstantService
      */
-    public function index()
-    {
-        $constants = Constant::get();
-        return view('dashboard.pages.constants',compact('constants'));
-    }
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(Request $request)
-    {
-        foreach($request->except('_token') as $key => $value){
-            Constant::updateOrCreate([
-                'key' => $key,
-            ],[
-                'value' => $value,
-            ]);
-        }
-        return redirect()->route('dashboard.constants.index')->with('success','تم تحديث القيم');
-    }
+    protected ConstantService $constantService;
 
     /**
-     * Remove the specified resource from storage.
+     * DummyModel Constructor
+     *
+     * @param ConstantService $constantService
+     *
      */
-    public function destroy(Request $request)
+    public function __construct(ConstantService $constantService)
     {
-        if($request->state_effectiveness){
-            Constant::findOrFail($request->state_effectiveness)->delete();
-        }
-        return redirect()->route('dashboard.constants.index')->with('danger','تم حذف القيمة المحددة');
+        $this->constantService = $constantService;
+    }
+
+    public function index(): \Illuminate\Contracts\View\View
+    {
+        $constants = $this->constantService->getAll();
+        return view('constants.index', compact('constants'));
+    }
+
+    public function create(): \Illuminate\Contracts\View\View
+    {
+        return view('constants.create');
+    }
+
+    public function store(ConstantRequest $request): \Illuminate\Http\RedirectResponse
+    {
+        $this->constantService->save($request->validated());
+        return redirect()->route('constants.index')->with('success', 'Created successfully');
+    }
+
+    public function show(int $id): \Illuminate\Contracts\View\View
+    {
+        $constant = $this->constantService->getById($id);
+        return view('constants.show', compact('constant'));
+    }
+
+    public function edit(int $id): \Illuminate\Contracts\View\View
+    {
+        $constant = $this->constantService->getById($id);
+        return view('constants.edit', compact('constant'));
+    }
+
+    public function update(ConstantRequest $request, int $id): \Illuminate\Http\RedirectResponse
+    {
+        $this->constantService->update($request->validated(), $id);
+        return redirect()->route('constants.index')->with('success', 'Updated successfully');
+    }
+
+    public function destroy(int $id): \Illuminate\Http\RedirectResponse
+    {
+        $this->constantService->deleteById($id);
+        return redirect()->route('constants.index')->with('success', 'Deleted successfully');
     }
 }
