@@ -12,13 +12,13 @@ class UserObserver
      */
     public function created(User $user): void
     {
-        ActivityLogService::log(
-            'Created',
-            'User',
-            "تم إضافة المستخدم : {$user->name}.",
-            null,
-            $user->toArray()
-        );
+        // ActivityLogService::log(
+        //     'Created',
+        //     'User',
+        //     "تم إضافة المستخدم : {$user->name}.",
+        //     null,
+        //     $user->toArray()
+        // );
     }
 
     /**
@@ -26,8 +26,8 @@ class UserObserver
      */
     public function updated(User $user): void
     {
-        
-        
+
+
     }
 
     /**
@@ -35,13 +35,13 @@ class UserObserver
      */
     public function deleted(User $user): void
     {
-        ActivityLogService::log(
-            'Deleted',
-            'User',
-            "تم حذف المستخدم : {$user->name}.",
-            $user->toArray(),
-            null
-        );
+        // ActivityLogService::log(
+        //     'Deleted',
+        //     'User',
+        //     "تم حذف المستخدم : {$user->name}.",
+        //     $user->toArray(),
+        //     null
+        // );
     }
 
     /**

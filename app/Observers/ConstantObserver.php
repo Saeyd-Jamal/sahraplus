@@ -12,13 +12,13 @@ class ConstantObserver
      */
     public function created(Constant $constant): void
     {
-        ActivityLogService::log(
-            'Created',
-            'Constant',
-            "تم إضافة ثابت.",
-            null,
-            $constant->toArray()
-        );
+        // ActivityLogService::log(
+        //     'Created',
+        //     'Constant',
+        //     "تم إضافة ثابت.",
+        //     null,
+        //     $constant->toArray()
+        // );
     }
 
     /**
@@ -26,13 +26,13 @@ class ConstantObserver
      */
     public function updated(Constant $constant): void
     {
-        ActivityLogService::log(
-            'Updated',
-            'Constant',
-            "تم تعديل ثابت.",
-            $constant->getOriginal(),
-            $constant->getChanges()
-        );
+        // ActivityLogService::log(
+        //     'Updated',
+        //     'Constant',
+        //     "تم تعديل ثابت.",
+        //     $constant->getOriginal(),
+        //     $constant->getChanges()
+        // );
     }
 
     /**
@@ -40,13 +40,13 @@ class ConstantObserver
      */
     public function deleted(Constant $constant): void
     {
-        ActivityLogService::log(
-            'Deleted',
-            'Constant',
-            "تم حذف ثابت.",
-            $constant->toArray(),
-            null
-        );
+        // ActivityLogService::log(
+        //     'Deleted',
+        //     'Constant',
+        //     "تم حذف ثابت.",
+        //     $constant->toArray(),
+        //     null
+        // );
     }
 
     /**

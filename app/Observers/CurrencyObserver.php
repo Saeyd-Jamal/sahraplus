@@ -12,13 +12,13 @@ class CurrencyObserver
      */
     public function created(Currency $currency): void
     {
-        ActivityLogService::log(
-            'Created',
-            'Currency',
-            "تم إضافة عملة : {$currency->name}.",
-            null,
-            $currency->toArray()
-        );
+        // ActivityLogService::log(
+        //     'Created',
+        //     'Currency',
+        //     "تم إضافة عملة : {$currency->name}.",
+        //     null,
+        //     $currency->toArray()
+        // );
     }
 
     /**
@@ -34,13 +34,13 @@ class CurrencyObserver
      */
     public function deleted(Currency $currency): void
     {
-        ActivityLogService::log(
-            'Deleted',
-            'Currency',
-            "تم حذف عملة : {$currency->name}.",
-            $currency->toArray(),
-            null
-        );
+        // ActivityLogService::log(
+        //     'Deleted',
+        //     'Currency',
+        //     "تم حذف عملة : {$currency->name}.",
+        //     $currency->toArray(),
+        //     null
+        // );
     }
 
     /**

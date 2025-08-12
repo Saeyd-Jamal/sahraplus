@@ -67,31 +67,31 @@ class FortifyServiceProvider extends ServiceProvider
         });
 
 
-        Fortify::authenticateUsing(function (Request $request) {
-            $user = User::where('username', $request->username)
-                        ->orWhere('email', $request->username)
-                        ->first();
+        // Fortify::authenticateUsing(function (Request $request) {
+        //     $user = User::where('username', $request->username)
+        //                 ->orWhere('email', $request->username)
+        //                 ->first();
 
-            if ($user && Hash::check($request->password, $user->password)) {
-                ActivityLogService::log(
-                    'Login',
-                    'User',
-                    "تم تسجيل دخول",
-                    null,
-                    null,
-                    $user->id,
-                    $user->name
-                );
-                return $user;
-            }
+        //     if ($user && Hash::check($request->password, $user->password)) {
+        //         // ActivityLogService::log(
+        //         //     'Login',
+        //         //     'User',
+        //         //     "تم تسجيل دخول",
+        //         //     null,
+        //         //     null,
+        //         //     $user->id,
+        //         //     $user->name
+        //         // );
+        //         return $user;
+        //     }
 
-            // if(Config::get('fortify.guard') == 'web'){
-            //     $user = User::where('username', $request->username)->first();
-            //     if ($user && Hash::check($request->password, $user->password)) {
-            //         return $user;
-            //     }
-            // }
-        });
+        //     // if(Config::get('fortify.guard') == 'web'){
+        //     //     $user = User::where('username', $request->username)->first();
+        //     //     if ($user && Hash::check($request->password, $user->password)) {
+        //     //         return $user;
+        //     //     }
+        //     // }
+        // });
 
 
         Fortify::createUsersUsing(CreateNewUser::class);
