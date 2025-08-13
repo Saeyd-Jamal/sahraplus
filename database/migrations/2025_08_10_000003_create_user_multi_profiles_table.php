@@ -9,8 +9,8 @@ return new class extends Migration {
     public function up(): void
     {
         Schema::create('user_multi_profiles', function (Blueprint $table) {
-            $table->bigIncrements('id');
-            $table->unsignedBigInteger('user_id');
+            $table->id();
+            $table->foreignId('user_id')->constrained('users')->cascadeOnDelete();
             $table->string('name', 191);
             $table->string('avatar', 191)->nullable();
             $table->boolean('is_default')->default(0);
@@ -18,7 +18,6 @@ return new class extends Migration {
             $table->unsignedInteger('created_by')->nullable();
             $table->unsignedInteger('updated_by')->nullable();
             $table->unsignedInteger('deleted_by')->nullable();
-            $table->timestamp('deleted_at')->nullable();
             $table->timestamps();
         });
     }

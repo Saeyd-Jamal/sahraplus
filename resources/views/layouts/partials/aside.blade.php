@@ -30,6 +30,15 @@
                 <div data-i18n="media">مكتبة الوسائط</div>
             </a>
         </li>
+        <li class="menu-header small">
+            <span class="menu-header-text" data-i18n="Apps &amp; Pages">الوسائط</span>
+        </li>
+        <li class="menu-item {{ request()->is('dashboard/genres') || request()->is('dashboard/genres/*') ? 'active' : '' }}">
+            <a href="{{ route('dashboard.genres.index') }}" class="menu-link">
+                <i class="icon ph ph-folders  me-2" data-bs-toggle="tooltip" data-bs-placement="right" aria-label="الأنواع" data-bs-original-title="الأنواع"></i>
+                <div data-i18n="genres">التصنيفات</div>
+            </a>
+        </li>
         {{-- <li class="menu-item">
             <a href="page-2.html" class="menu-link">
                 <i class="menu-icon tf-icons ti ti-app-window"></i>

@@ -2,6 +2,7 @@
 namespace App\Repositories;
 
 use App\Models\Genre;
+use Illuminate\Support\Str;
 
 class GenreRepository
 {
@@ -49,6 +50,7 @@ class GenreRepository
      */
      public function save(array $data)
     {
+        $data['slug'] = Str::slug($data['name']);
         return Genre::create($data);
     }
 
@@ -60,6 +62,7 @@ class GenreRepository
      */
     public function update(array $data, int $id)
     {
+        $data['slug'] = Str::slug($data['name']);
         $genre = $this->genre->find($id);
         $genre->update($data);
         return $genre;

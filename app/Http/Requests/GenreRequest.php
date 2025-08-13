@@ -14,15 +14,11 @@ class GenreRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'name' => 'string|max:191',
-            'slug' => 'string|max:191',
-            'file_url' => 'string',
-            'description' => 'string',
-            'status' => 'integer',
-            'created_by' => 'integer',
-            'updated_by' => 'integer',
-            'deleted_by' => 'integer',
-            'deleted_at' => 'date',
+            'name' => 'required|string|max:255',
+            'file_url' => 'nullable|string',
+            'description' => 'nullable|string',
+            'image' => 'nullable|string',
+            'status' => 'in:0,1',
         ];
     }
 }

@@ -9,15 +9,14 @@ return new class extends Migration {
     public function up(): void
     {
         Schema::create('user_profiles', function (Blueprint $table) {
-            $table->bigIncrements('id');
+            $table->id();
             $table->string('about_self', 191)->nullable();
             $table->string('expert', 191)->nullable();
             $table->string('facebook_link', 191)->nullable();
             $table->string('instagram_link', 191)->nullable();
             $table->string('twitter_link', 191)->nullable();
             $table->string('dribbble_link', 191)->nullable();
-            $table->unsignedBigInteger('user_id');
-            $table->timestamp('deleted_at')->nullable();
+            $table->foreignId('user_id')->constrained('users')->cascadeOnDelete();
             $table->timestamps();
         });
     }

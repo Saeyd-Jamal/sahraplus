@@ -3,7 +3,7 @@
         <link rel="stylesheet" href="{{ asset('css/custom/media.css') }}">
     @endpush
     <div class="card">
-        <div class="card-header d-flex justify-content-between my-2">
+        <div class="my-2 card-header d-flex justify-content-between">
             <h3 class="card-title">📁 مكتبة الوسائط</h3>
             <div>
                 <form id="uploadForm" enctype="multipart/form-data" class="mb-3">

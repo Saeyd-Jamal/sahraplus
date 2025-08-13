@@ -3,7 +3,7 @@
 
 // dashboard routes
 
-
+use App\Http\Controllers\Dashboard\GenreController;
 use App\Http\Controllers\Dashboard\HomeController;
 use App\Http\Controllers\Dashboard\ReportController;
 use App\Http\Controllers\Dashboard\UserController;
@@ -50,6 +50,7 @@ Route::group([
     Route::resources([
         'users' => UserController::class,
         'media' => MediaController::class,
+        'genres' => GenreController::class,
     ]);
     /* ********************************************************** */
 });

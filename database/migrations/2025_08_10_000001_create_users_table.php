@@ -9,7 +9,7 @@ return new class extends Migration {
     public function up(): void
     {
         Schema::create('users', function (Blueprint $table) {
-            $table->bigIncrements('id');
+            $table->id();
             $table->string('username', 191)->nullable();
             $table->string('first_name', 191)->nullable();
             $table->string('last_name', 191)->nullable();
@@ -31,7 +31,7 @@ return new class extends Migration {
             $table->integer('otp')->nullable();
             $table->boolean('is_parental_lock_enable')->default(0);
             $table->string('remember_token', 100)->nullable();
-            $table->timestamp('deleted_at')->nullable();
+            $table->softDeletes();
             $table->string('father_code', 191)->nullable();
             $table->timestamps();
         });
