@@ -36,7 +36,7 @@
                     هل أنت متأكد من حذف هذه الصورة؟
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-pc-modal-dismiss="#confirmDeleteModal"
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"
                         id="closeDeleteModal">إلغاء</button>
                     <button type="button" class="btn btn-danger" id="confirmDeleteBtn">نعم، حذف</button>
                 </div>
@@ -53,10 +53,10 @@
                 </div>
 
                 <div class="p-4 modal-body">
-                    <div class="grid grid-cols-12 gap-6">
+                    <div class="row">
 
                         <!-- صورة المعاينة -->
-                        <div class="col-span-6">
+                        <div class="col-6">
                             <img id="editPreview" src="" alt="preview" class="rounded border shadow img-fluid"
                                 style="max-height: 300px;">
 
@@ -87,7 +87,7 @@
                         </div>
 
                         <!-- التفاصيل -->
-                        <div class="col-span-6">
+                        <div class="col-6">
                             <input type="hidden" id="editId">
 
                             <div class="mb-3">
@@ -115,7 +115,7 @@
                 </div>
 
                 <div class="px-4 py-3 modal-footer">
-                    <button type="button" class="btn btn-secondary" data-pc-modal-dismiss="#editModal"
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"
                         id="closeEditModal">إلغاء</button>
                     <button type="submit" class="btn btn-success">💾 حفظ التعديلات</button>
                 </div>
@@ -124,19 +124,20 @@
     </div>
 
     <!-- زر سري لفتح مودال التعديل -->
-    <button type="button" class="hidden btn btn-primary d-none" data-pc-toggle="modal" data-pc-target="#editModal"
+    <button type="button" class="hidden btn btn-primary d-none" data-bs-toggle="modal" data-bs-target="#editModal"
         id="openEditModalBtn"></button>
 
     <!-- زر سري لفتح مودال الحذف -->
-    <button type="button" class="hidden btn btn-primary d-none" data-pc-toggle="modal"
-        data-pc-target="#confirmDeleteModal" id="openDeleteModalBtn"></button>
+    <button type="button" class="hidden btn btn-primary d-none" data-bs-toggle="modal"
+        data-bs-target="#confirmDeleteModal" id="openDeleteModalBtn"></button>
 
     @push('scripts')
         <script>
             const urlUpload = "{{ route('dashboard.media.store') }}";
             const urlIndex = "{{ route('dashboard.media.index') }}";
             const urlDelete = "{{ route('dashboard.media.destroy', ':id') }}";
-            const urlEdit = "{{ route('dashboard.media.edit', ':id') }}";
+            const urlEdit = "{{ route('dashboard.media.update', ':id') }}";
+            const _token = "{{ csrf_token() }}";
         </script>
         <script src="{{ asset('js/custom/media.js') }}"></script>
     @endpush

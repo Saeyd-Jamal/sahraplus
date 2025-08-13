@@ -4,9 +4,9 @@ $(document).ready(function () {
     $("#uploadBtn").click(function () {
         $("#imageInput").click();
     });
-    $('#imageInput').change(function () {
-        $('#uploadForm').submit();
-    })
+    $("#imageInput").change(function () {
+        $("#uploadForm").submit();
+    });
     // رفع صور (واحدة أو أكثر)
     $("#uploadForm").submit(function (e) {
         e.preventDefault();
@@ -35,21 +35,21 @@ $(document).ready(function () {
             let html = "";
             data.forEach((item) => {
                 html += `
-<div class="overflow-hidden masonry-item position-relative">
-<img src="/storage/${item.file_path}" class="img-fluid media-image">
-<div class="top-0 p-2 media-actions position-absolute end-0" style="display: none;">
-<button class="border btn btn-sm btn-light rounded-circle edit-btn" data-id="${item.id}" data-name="${item.name}" title="تعديل">
-    <i class="fas fa-pen text-secondary"></i>
-</button>
-<button class="border btn btn-sm btn-light rounded-circle me-1 delete-btn" data-id="${item.id}" title="حذف">
-    <i class="fas fa-trash text-danger"></i>
-</button>
-</div>
-<div class="p-2 text-center info">
-<small>${item.name}</small>
-</div>
-</div>
-`;
+                    <div class="overflow-hidden masonry-item position-relative">
+                        <img src="/storage/${item.file_path}" class="img-fluid media-image">
+                        <div class="top-0 p-2 media-actions position-absolute" style="display: none;">
+                            <button class="border btn btn-sm btn-light rounded-circle edit-btn" data-id="${item.id}" data-name="${item.name}" title="تعديل">
+                                <i class="fas fa-pen text-secondary"></i>
+                            </button>
+                            <button class="border btn btn-sm btn-light rounded-circle me-1 delete-btn" data-id="${item.id}" title="حذف">
+                                <i class="fas fa-trash text-danger"></i>
+                            </button>
+                        </div>
+                        <div class="p-2 text-center info">
+                            <small>${item.name}</small>
+                        </div>
+                    </div>
+                `;
             });
             $("#mediaGrid").html(html);
         });
@@ -70,7 +70,7 @@ $(document).ready(function () {
                 url: urlDelete.replace(":id", deleteId),
                 method: "DELETE",
                 data: {
-                    _token: "{{ csrf_token() }}",
+                    _token: _token,
                 },
                 success: function () {
                     $("#closeDeleteModal").click();
@@ -111,7 +111,7 @@ $(document).ready(function () {
             url: urlEdit.replace(":id", id),
             method: "PUT",
             data: {
-                _token: "{{ csrf_token() }}",
+                _token: _token,
                 alt: $("#editAlt").val(),
                 title: $("#editTitle").val(),
                 caption: $("#editCaption").val(),
