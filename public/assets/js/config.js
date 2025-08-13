@@ -98,7 +98,7 @@ if (typeof TemplateCustomizer !== 'undefined') {
     defaultTextDir: 'rtl',
     defaultContentLayout: 'wide',
     // defaultHeaderType: 'static',
-    defaultMenuCollapsed: true,
+    defaultMenuCollapsed: false,
     // defaultNavbarType: 'sticky',
     // defaultFooterFixed: false,
     defaultShowDropdownOnHover: false,

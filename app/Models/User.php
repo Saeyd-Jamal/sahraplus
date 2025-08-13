@@ -64,4 +64,10 @@ class User extends Authenticatable
     {
         return $this->hasMany(WatchHistory::class, 'user_id');
     }
+
+    // Accessors
+    public function getAvatarUrlAttribute()
+    {
+        return $this->file_url ? asset('storage/' . $this->file_url) : asset('imgs/user.jpg');
+    }
 }

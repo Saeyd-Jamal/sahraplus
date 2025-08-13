@@ -9,5 +9,15 @@ class Media extends Model
 {
     use HasFactory;
     protected $table = 'media';
-    protected $fillable = ['model_type', 'model_id', 'uuid', 'collection_name', 'name', 'file_name', 'mime_type', 'disk', 'conversions_disk', 'size', 'manipulations', 'custom_properties', 'generated_conversions', 'responsive_images', 'order_column'];
+    protected $fillable = [
+        'name',
+        'file_path',
+        'mime_type',
+        'size',
+        'uploader_id',
+        'alt',
+        'title',
+        'caption',
+        'description',
+    ];
 }

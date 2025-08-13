@@ -283,7 +283,7 @@
                     <li>
                         <div class="my-1 dropdown-divider mx-n2"></div>
                     </li>
-                    <li>
+                    {{-- <li>
                         <a class="dropdown-item" href="{{ route('dashboard.users.show', $auth_user->id) }}">
                             <i class="ti ti-user me-3 ti-md"></i><span class="align-middle">
                                 الملف الشخصي</span>
@@ -293,7 +293,7 @@
                         <a class="dropdown-item" href="{{ route('dashboard.profile.settings') }}">
                             <i class="ti ti-settings me-3 ti-md"></i><span class="align-middle">الإعدادات</span>
                         </a>
-                    </li>
+                    </li> --}}
                     {{-- <li>
                         <a class="dropdown-item" href="#">
                             <span class="align-middle d-flex align-items-center">

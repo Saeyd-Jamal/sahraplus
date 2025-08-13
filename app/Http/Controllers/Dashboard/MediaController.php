@@ -1,67 +1,125 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Dashboard;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\MediaRequest;
-use App\Services\MediaService;
+use App\Models\Media;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class MediaController extends Controller
 {
-    /**
-     * @var MediaService
-     */
-    protected MediaService $mediaService;
-
-    /**
-     * DummyModel Constructor
-     *
-     * @param MediaService $mediaService
-     *
-     */
-    public function __construct(MediaService $mediaService)
+    public function index()
     {
-        $this->mediaService = $mediaService;
+        $media = Media::latest()->get();
+        $request = request();
+        if ($request->ajax()) {
+            return response()->json($media);
+        }
+        return view('dashboard.pages.media');
     }
 
-    public function index(): \Illuminate\Contracts\View\View
+    public function store(Request $request)
     {
-        $media = $this->mediaService->getAll();
-        return view('media.index', compact('media'));
+        // إذا أرسلت كمصفوفة images[] (متعدد)
+        if ($request->hasFile('images')) {
+            $request->validate([
+                'images'   => 'required|array',
+                'images.*' => 'file|image|max:5120', // 5MB مثلاً
+            ]);
+
+            $files = $request->file('images');
+            $saved = [];
+
+            foreach ($files as $file) {
+                $path = $file->store('uploads/media', 'public');
+
+                $media = Media::create([
+                    'name'        => $file->getClientOriginalName(),
+                    'file_path'   => $path,
+                    'mime_type'   => $file->getMimeType(),
+                    'size'        => $file->getSize(),
+                    'uploader_id' => Auth::id(),
+                ]);
+
+                $saved[] = $media;
+            }
+
+            return response()->json([
+                'status' => 'ok',
+                'count'  => count($saved),
+                'items'  => $saved,
+            ]);
+        }
+
+        // دعم الاسم القديم image (مفرد) لتوافق الخلف
+        if ($request->hasFile('image')) {
+            $request->validate([
+                'image' => 'required|file|image|max:5120',
+            ]);
+
+            $file = $request->file('image');
+            $path = $file->store('uploads/media', 'public');
+
+            $media = Media::create([
+                'name'        => $file->getClientOriginalName(),
+                'file_path'   => $path,
+                'mime_type'   => $file->getMimeType(),
+                'size'        => $file->getSize(),
+                'uploader_id' => Auth::id(),
+            ]);
+
+            return response()->json([
+                'status' => 'ok',
+                'count'  => 1,
+                'items'  => [$media],
+            ]);
+        }
+
+        // لا يوجد ملفات
+        return response()->json([
+            'status'  => 'error',
+            'message' => 'لم يتم اختيار أي صور.',
+        ], 422);
     }
 
-    public function create(): \Illuminate\Contracts\View\View
+    public function show($id)
     {
-        return view('media.create');
+        $media = Media::findOrFail($id);
+        return response()->json($media);
     }
 
-    public function store(MediaRequest $request): \Illuminate\Http\RedirectResponse
+    public function edit($id)
     {
-        $this->mediaService->save($request->validated());
-        return redirect()->route('media.index')->with('success', 'Created successfully');
+        $media = Media::findOrFail($id);
+        return response()->json($media);
     }
 
-    public function show(int $id): \Illuminate\Contracts\View\View
+    public function update(Request $request, $id)
     {
-        $media = $this->mediaService->getById($id);
-        return view('media.show', compact('media'));
+        $media = Media::findOrFail($id);
+
+        $request->validate([
+            'name' => 'nullable|string|max:255',
+            'alt' => 'nullable|string|max:255',
+            'title' => 'nullable|string|max:255',
+            'caption' => 'nullable|string',
+            'description' => 'nullable|string',
+        ]);
+
+        $media->update($request->all());
+
+        return response()->json(['message' => 'تم التحديث بنجاح']);
     }
 
-    public function edit(int $id): \Illuminate\Contracts\View\View
-    {
-        $media = $this->mediaService->getById($id);
-        return view('media.edit', compact('media'));
-    }
 
-    public function update(MediaRequest $request, int $id): \Illuminate\Http\RedirectResponse
+    public function destroy($id)
     {
-        $this->mediaService->update($request->validated(), $id);
-        return redirect()->route('media.index')->with('success', 'Updated successfully');
-    }
+        $media = Media::findOrFail($id);
+        Storage::disk('public')->delete($media->file_path);
+        $media->delete();
 
-    public function destroy(int $id): \Illuminate\Http\RedirectResponse
-    {
-        $this->mediaService->deleteById($id);
-        return redirect()->route('media.index')->with('success', 'Deleted successfully');
+        return response()->json(['message' => 'تم الحذف']);
     }
 }
