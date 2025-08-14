@@ -41,28 +41,28 @@ class AppServiceProvider extends ServiceProvider
         Paginator::useBootstrapFive();
 
 
-        // //Authouration
-        // Gate::before(function ($user, $ability) {
-        //     if($user instanceof User) {
-        //         if($user->super_admin) {
-        //             return true;
-        //         }
-        //     }
-        // });
-        // // the Authorization for Report Page
-        // Gate::define('report.view', function ($user) {
-        //     if($user instanceof User) {
-        //         if($user->roles->contains('role_name', 'report.view')) {
-        //             return true;
-        //         }
-        //         return false;
-        //     }
-        // });
+        //Authouration
+        Gate::before(function ($user, $ability) {
+            if($user instanceof User) {
+                if($user->super_admin) {
+                    return true;
+                }
+            }
+        });
+        // the Authorization for Report Page
+        Gate::define('report.view', function ($user) {
+            if($user instanceof User) {
+                if($user->roles->contains('role_name', 'report.view')) {
+                    return true;
+                }
+                return false;
+            }
+        });
 
 
 
         // Observe For Models
-        // User::observe(UserObserver::class);
+        User::observe(UserObserver::class);
         // Constant::observe(ConstantObserver::class);
         // Currency::observe(CurrencyObserver::class);
 

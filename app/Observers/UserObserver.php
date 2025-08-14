@@ -35,13 +35,13 @@ class UserObserver
      */
     public function deleted(User $user): void
     {
-        // ActivityLogService::log(
-        //     'Deleted',
-        //     'User',
-        //     "تم حذف المستخدم : {$user->name}.",
-        //     $user->toArray(),
-        //     null
-        // );
+        ActivityLogService::log(
+            'Deleted',
+            'User',
+            "تم حذف المستخدم : {$user->name}.",
+            $user->toArray(),
+            null
+        );
     }
 
     /**

@@ -3,6 +3,7 @@
 
 // dashboard routes
 
+use App\Http\Controllers\Dashboard\ActivityLogController;
 use App\Http\Controllers\Dashboard\GenreController;
 use App\Http\Controllers\Dashboard\HomeController;
 use App\Http\Controllers\Dashboard\ReportController;
@@ -10,6 +11,9 @@ use App\Http\Controllers\Dashboard\UserController;
 use App\Http\Controllers\Dashboard\MediaController;
 use Illuminate\Support\Facades\Route;
 
+Route::get('dashboard',function(){
+    return redirect()->route('dashboard.home');
+});
 Route::group([
     'prefix' => 'dashboard',
     'middleware' => ['auth'],
@@ -18,14 +22,14 @@ Route::group([
     /* ********************************************************** */
 
     // Dashboard ************************
-    Route::get('/', [HomeController::class, 'index'])->name('home');
+    Route::get('/home', [HomeController::class, 'index'])->name('home');
 
     // Logs ************************
-    // Route::get('logs', [ActivityLogController::class, 'index'])->name('logs.index');
-    // Route::get('getLogs', [ActivityLogController::class, 'getLogs'])->name('logs.getLogs');
+    Route::get('logs', [ActivityLogController::class, 'index'])->name('logs.index');
+    Route::get('getLogs', [ActivityLogController::class, 'getLogs'])->name('logs.getLogs');
 
     // users ************************
-    // Route::get('profile/settings', [UserController::class, 'settings'])->name('profile.settings');
+    Route::get('profile/settings', [UserController::class, 'settings'])->name('profile.settings');
 
     // media ************************
     // Route::get('media', [MediaController::class, 'media'])->name('media');

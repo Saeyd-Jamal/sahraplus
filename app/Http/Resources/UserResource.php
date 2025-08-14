@@ -33,6 +33,9 @@ class UserResource extends JsonResource
             'remember_token' => $this->remember_token,
             'deleted_at' => $this->deleted_at,
             'father_code' => $this->father_code,
+            'avatar'  => $this->avatar_url,
+            'last_activity'  => $this->last_activity,
+            'super_admin'  => $this->super_admin
         ];
     }
 }

@@ -12,31 +12,35 @@ class User extends Authenticatable
 {
     use HasFactory, SoftDeletes;
     protected $table = 'users';
-    // حدّد الحقول المسموح تعبئتها
+
     protected $fillable = [
-        'username',
-        'first_name',
-        'last_name',
-        'email',
-        'mobile',
-        'login_type',
-        'file_url',
-        'gender',
-        'date_of_birth',
-        'email_verified_at',
-        'password',
-        'is_banned',
-        'is_subscribe',
-        'status',
-        'last_notification_seen',
-        'address',
-        'user_type',
-        'pin',
-        'otp',
-        'is_parental_lock_enable',
-        'remember_token',
-        'father_code',
+        'username',                  // اسم المستخدم - يُستخدم لتسجيل الدخول أو كمعرف فريد داخل النظام
+        'first_name',                // الاسم الأول - للعرض في الملف الشخصي أو القوائم
+        'last_name',                 // الاسم الأخير - يُستخدم مع الاسم الأول لعرض الاسم الكامل
+        'email',                     // البريد الإلكتروني - يستخدم للتواصل وتسجيل الدخول، فريد
+        'mobile',                    // رقم الهاتف - يستخدم للتحقق أو التواصل، اختياري
+        'login_type',                // نوع تسجيل الدخول - manual | google | facebook، لتحديد مزود الدخول
+        'file_url',                  // رابط ملف/وثيقة/صورة - غالبًا صورة الهوية أو مستندات
+        'gender',                    // الجنس - male | female، لأغراض إحصائية أو تخصيص الواجهة
+        'date_of_birth',             // تاريخ الميلاد - يُستخدم لتحديد العمر أو التحقق من السن
+        'email_verified_at',         // وقت تفعيل البريد الإلكتروني - يُستخدم لمعرفة هل البريد مُفعل
+        'password',                  // كلمة المرور - مشفّرة bcrypt، للحسابات التي تسجل يدويًا
+        'is_banned',                 // هل الحساب محظور؟ 0 = لا، 1 = نعم - لمنع المستخدم من تسجيل الدخول
+        'is_subscribe',             // هل المستخدم مشترك في خدمة معينة؟ 0 = لا، 1 = نعم - مثل اشتراك بريميوم
+        'status',                    // حالة الحساب - 1 = نشط، 0 = غير نشط - يُستخدم لإخفاء/تعطيل الحساب
+        'last_notification_seen',    // توقيت آخر إشعار تم مشاهدته - لتحديد الإشعارات الجديدة
+        'address',                   // العنوان التفصيلي - مدينة، شارع، ... إلخ، اختياري
+        'user_type',                 // نوع المستخدم - admin | user | vendor... يُحدد الصلاحيات
+        'pin',                       // رمز PIN مكون من 4 أرقام - لأغراض أمنية إضافية مثل قفل أبوي
+        'otp',                       // رمز التحقق OTP المؤقت - يستخدم في المصادقة الثنائية
+        'is_parental_lock_enable',   // هل القفل الأبوي مفعل؟ 0 = لا، 1 = نعم - لحماية المحتوى للأطفال
+        'remember_token',            // توكن لتسجيل الدخول التلقائي (remember me) - يستخدمه Laravel Auth
+        'father_code',               // كود المُعرّف (مثل كود الإحالة أو كود الأب) - يستخدم لتتبع التسلسل أو الإحالة
+        'avatar',                    // الصورة الرمزية (صورة الحساب) - بديل لـ file_url إن كانت صورة بروفايل فقط
+        'last_activity',             // توقيت آخر نشاط للمستخدم - مفيد لتحديد إذا المستخدم متصل الآن
+        'super_admin',               // هل هو مسؤول عام؟ 0 = لا، 1 = نعم - يمتلك جميع الصلاحيات بدون قيود
     ];
+
 
     protected $hidden = ['password', 'remember_token'];
     protected $casts = [
@@ -45,6 +49,8 @@ class User extends Authenticatable
         'last_notification_seen' => 'datetime',
         'is_parental_lock_enable' => 'boolean',
     ];
+
+    // Relationsheps
     public function comments()
     {
         return $this->hasMany(Comment::class, 'user_id');
@@ -65,9 +71,18 @@ class User extends Authenticatable
         return $this->hasMany(WatchHistory::class, 'user_id');
     }
 
-    // Accessors
-    public function getAvatarUrlAttribute()
+    public function roles()
     {
-        return $this->file_url ? asset('storage/' . $this->file_url) : asset('imgs/user.jpg');
+        return $this->hasMany(RoleUser::class, 'user_id', 'id');
+    }
+
+
+    // Accessor
+    public function getAvatarUrlAttribute() // $user->avatar_url
+    {
+        if ($this->avatar) {
+            return asset('storage/' . $this->avatar);
+        }
+        return asset('imgs/user.jpg');
     }
 }

@@ -20,17 +20,17 @@ class DatabaseSeeder extends Seeder
         // Create Admin User
 
         User::create([
-            'username'              => 'admin',
             'first_name'            => 'Administrator',
             'last_name'             => null,
+            'username'              => 'admin',
             'email'                 => 'admin@admin.com',
+            'password'              => Hash::make('12345678'),
             'mobile'                => null,
             'login_type'            => null,
             'file_url'              => null,
             'gender'                => null,
             'date_of_birth'         => null,
             'email_verified_at'     => now(),
-            'password'              => Hash::make('12345678'),
             'is_banned'             => 0,
             'is_subscribe'          => 0,
             'status'                => 1,
@@ -42,6 +42,9 @@ class DatabaseSeeder extends Seeder
             'is_parental_lock_enable' => 0,
             'remember_token'        => null,
             'father_code'           => null,
+            'last_activity'  => now(),
+            'avatar'  => null,
+            'super_admin'  => 1,
         ]);
     }
 }

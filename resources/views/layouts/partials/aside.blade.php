@@ -1,5 +1,5 @@
 <aside id="layout-menu" class="layout-menu menu-vertical menu bg-menu-theme">
-    <div class="app-brand demo"  style="overflow: visible">
+    <div class="app-brand demo" style="overflow: visible">
         <a href="{{ route('dashboard.home') }}" class="app-brand-link">
             <span class="app-brand-logo demo" style="overflow: visible">
                 <img src=" {{ asset('imgs/logo-brand.png') }}" alt="Logo" width="60">
@@ -24,21 +24,60 @@
                 <div data-i18n="home">الرئيسية</div>
             </a>
         </li>
-        <li class="menu-item {{ request()->is('dashboard/media') || request()->is('dashboard/media/*') ? 'active' : '' }}">
-            <a href="{{ route('dashboard.media.index') }}" class="menu-link">
-                <i class="fa-solid fa-images me-2"></i>
-                <div data-i18n="media">مكتبة الوسائط</div>
-            </a>
-        </li>
+        @can('view', 'App\\Models\Media')
+            <li
+                class="menu-item {{ request()->is('dashboard/media') || request()->is('dashboard/media/*') ? 'active' : '' }}">
+                <a href="{{ route('dashboard.media.index') }}" class="menu-link">
+                    <i class="fa-solid fa-images me-2"></i>
+                    <div data-i18n="media">مكتبة الوسائط</div>
+                </a>
+            </li>
+        @endcan
         <li class="menu-header small">
             <span class="menu-header-text" data-i18n="Apps &amp; Pages">الوسائط</span>
         </li>
-        <li class="menu-item {{ request()->is('dashboard/genres') || request()->is('dashboard/genres/*') ? 'active' : '' }}">
-            <a href="{{ route('dashboard.genres.index') }}" class="menu-link">
-                <i class="icon ph ph-folders  me-2" data-bs-toggle="tooltip" data-bs-placement="right" aria-label="الأنواع" data-bs-original-title="الأنواع"></i>
-                <div data-i18n="genres">التصنيفات</div>
-            </a>
+        @can('view', 'App\\Models\Genre')
+            <li
+                class="menu-item {{ request()->is('dashboard/genres') || request()->is('dashboard/genres/*') ? 'active' : '' }}">
+                <a href="{{ route('dashboard.genres.index') }}" class="menu-link">
+                    <i class="icon ph ph-folders me-2" data-bs-toggle="tooltip" data-bs-placement="right"
+                        aria-label="الأنواع" data-bs-original-title="الأنواع"></i>
+                    <div data-i18n="genres">التصنيفات</div>
+                </a>
+            </li>
+        @endcan
+        <li class="menu-header small">
+            <span class="menu-header-text" data-i18n="Apps &amp; Pages">الإعدادات</span>
         </li>
+        @can('view', 'App\\Models\User')
+            <li class="menu-item  {{ request()->is('dashboard/users') || request()->is('dashboard/users/*') ? 'active' : '' }}">
+                <a href="javascript:void(0)" class="menu-link menu-toggle">
+                    <i class="icon ph ph-users me-2" data-bs-toggle="tooltip" data-bs-placement="right" aria-label="المستخدمين"
+                        data-bs-original-title="المستخدمين"></i>
+                    <div data-i18n="Dashboards">المستخدمين</div>
+                </a>
+                <ul class="menu-sub">
+                    <li class="menu-item">
+                        <a href="{{ route('dashboard.users.index',['user_type'=>'admin']) }}" class="menu-link">
+                            <i class="menu-icon tf-icons ti ti-chart-pie-2"></i>
+                            <div data-i18n="Analytics">الأدمن</div>
+                        </a>
+                    </li>
+                    <li class="menu-item">
+                        <a href="{{ route('dashboard.users.index',['user_type'=>'user']) }}" class="menu-link">
+                            <i class="menu-icon tf-icons ti ti-3d-cube-sphere"></i>
+                            <div data-i18n="CRM">المستخدمين</div>
+                        </a>
+                    </li>
+                    <li class="menu-item">
+                        <a href="{{ route('dashboard.users.index',['user_type'=>'vendor']) }}" class="menu-link">
+                            <i class="menu-icon tf-icons ti ti-shopping-cart"></i>
+                            <div data-i18n="eCommerce">المزودين</div>
+                        </a>
+                    </li>
+                </ul>
+            </li>
+        @endcan
         {{-- <li class="menu-item">
             <a href="page-2.html" class="menu-link">
                 <i class="menu-icon tf-icons ti ti-app-window"></i>
@@ -88,7 +127,7 @@
     <div class="my-3 text-center text-white text-body">
         ©
         2025
-        , تم الإنشاء ❤️ بواسطة <a href="https://saeyd-jamal.github.io/Portfolio/" target="_blank"
-            class="footer-link">م . السيد الاخرسي</a>
+        , تم الإنشاء ❤️ بواسطة <a href="https://saeyd-jamal.github.io/Portfolio/" target="_blank" class="footer-link">م
+            . السيد الاخرسي</a>
     </div>
 </aside>

@@ -1,7 +1,7 @@
 <x-dashboard-layout>
     <div class="card">
         <div class="card-header d-flex justify-content-between">
-            <h5 class="card-title mb-0">جدول المستخدمين</h5>
+            <h5 class="mb-0 card-title">جدول المستخدمين - {{$user_type}}</h5>
             <div class="d-flex align-items-center">
                 @can('create', 'App\\Models\User')
                     <a class="btn btn-success" href="{{route('dashboard.users.create')}}">
@@ -30,11 +30,13 @@
                         </tr>
                     </thead>
                     <tbody>
+                        @if($user_type == 'admin')
                         <style>
                             #user-1{
                                 display: none;
                             }
                         </style>
+                        @endif
                         @foreach($users as $user)
                         <tr  id="user-{{$user->id}}">
                             <td style="width: 10px">{{ $loop->iteration - 1 }}</td>
@@ -56,7 +58,7 @@
                             <td>{{$user->last_activity}}</td>
                             <td>
                                 <div class="dropdown">
-                                    <button type="button" class="btn p-0 dropdown-toggle hide-arrow"
+                                    <button type="button" class="p-0 btn dropdown-toggle hide-arrow"
                                         data-bs-toggle="dropdown">
                                         <i class="ti ti-dots-vertical"></i>
                                     </button>
